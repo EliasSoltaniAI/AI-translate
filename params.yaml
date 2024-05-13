@@ -1,0 +1,7 @@
+competency-data:
+  data_path: data/New_TO_Skills_Translation.xlsx
+
+model:
+  model_name: gpt-3.5-turbo
+  temperature: 0.0
+
