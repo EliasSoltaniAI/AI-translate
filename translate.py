@@ -54,7 +54,7 @@ def get_languages_from_df_column_names(df: pd.DataFrame) -> List[str]:
 
 
 def batch_lang_translate(chain: RunnableSequence, text: str, language_codes: List[str],
-                          retries=3, delay=2) -> List[str]:
+                          retries=3, delay=5) -> List[str]:
     """Translate a single description to multiple languages."""
     for attempt in range(retries):
         try:
@@ -94,9 +94,13 @@ def update_df(df: pd.DataFrame, results: List[Tuple[int, List[str]]], language_c
 
     for index, translations in results:
         update_data['index'].append(index)
-        for lang_index, translation in enumerate(translations):
-            lang_code = language_codes[lang_index]
-            update_data[f'{lang_code} description'].append(translation)
+        if translations:
+            for lang_index, translation in enumerate(translations):
+                lang_code = language_codes[lang_index]
+                update_data[f'{lang_code} description'].append(translation)
+        else:
+            for lang_code in language_codes:
+                update_data[f'{lang_code} description'].append(None)
 
     temp_df = pd.DataFrame(update_data).set_index('index')
 
