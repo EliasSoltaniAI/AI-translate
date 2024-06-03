@@ -1,7 +1,10 @@
 competency-data:
-  data_path: data/New_TO_Skills_Translation.xlsx
+  data_path: data/J&J_New_Competencies_Translation_30May2024.xlsx
 
 model:
-  model_name: gpt-3.5-turbo
+  model_name: gpt-4o  # openai models. There are several models available such as gpt-3.5-turbo. Check the openai documentation for more details. 
   temperature: 0.0
+
+parallel_processing:
+  num_processes: 6  # Number of parallel processes to run. Default is 6. Maximum number depends on the number of cores available on the machine.
 

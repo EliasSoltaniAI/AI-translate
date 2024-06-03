@@ -5,3 +5,7 @@ experiments/
 data/
 
 llm_config.yaml
+
+.DS_Store
+
+translated_files/
