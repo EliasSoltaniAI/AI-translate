@@ -1,7 +1,8 @@
 
-# Skill Description Translator
+# Skill Translation API
 
-This project is a Skill Description Translator that utilizes Streamlit for the frontend and FastAPI for the backend. It allows users to upload an Excel file, select sheets and columns to translate, and specify target languages for translation. The translations are performed using OpenAI's GPT models.
+This project is a skill description translator. It allows users to upload an Excel file, select sheets and columns to translate, and specify target languages for translation. The translations are performed using OpenAI's GPT models.
+The model is configurable. It can run in parallel to speed up and the number of processors to run is configurable. You can set these parameters in params.yaml file.
 
 ## Table of Contents
 
@@ -13,62 +14,37 @@ This project is a Skill Description Translator that utilizes Streamlit for the f
 - [Screenshots](#screenshots)
 
 ## Installation
+Open a terminal and follow the next commands.
 
 1. Clone the repository:
     ```bash
-    git clone https://github.com/your-repo/skill-description-translator.git
-    cd skill-description-translator
+    git clone git@github.com:EliasSoltaniAI/skill-translation-api.git
+    cd skill-translation-api
     ```
 
-2. Create and activate a virtual environment:
+2. Install the required packages:
     ```bash
-    python -m venv venv
-    source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
-    ```
-
-3. Install the required packages:
-    ```bash
-    pip install -r requirements.txt
+    poetry install
+    poetry shell
     ```
 
 ## Usage
-
+    ```bash
+    chmod +x run_app.sh && ./run_app.sh
+    ```
+Open your web browser and go to `http://localhost:8501`.
+or you can run the backend and frontend with the follwoing commands
 1. Start the FastAPI backend:
     ```bash
-    uvicorn app.main:app --reload
+    uvicorn src.main:app
     ```
 
 2. Run the Streamlit app:
     ```bash
-    streamlit run app/frontend/app.py
+    streamlit run src/app/app.py
     ```
 
 3. Open your web browser and go to `http://localhost:8501`.
-
-## Project Structure
-
-```
-project/
-├── app/
-│   ├── __init__.py
-│   ├── main.py
-│   ├── models.py
-│   ├── services.py
-│   ├── utils.py
-│   ├── api/
-│   │   ├── __init__.py
-│   │   ├── routes.py
-│   ├── frontend/
-│   │   ├── __init__.py
-│   │   ├── app.py
-├── data/
-│   ├── translated_descriptions.xlsx
-│   ├── back_translated_descriptions.xlsx
-│   ├── sample_data.xlsx
-├── params.yaml
-├── llm_config.yaml
-├── requirements.txt
-```
 
 ## Streamlit App
 
@@ -82,10 +58,6 @@ The Streamlit app provides an interactive interface for uploading the Excel file
 - **Translation**: Send the selected data to the FastAPI backend for translation.
 - **Download**: Download the translated Excel file.
 
-### Screenshots
-
-![Streamlit App Screenshot](path_to_screenshot)
-
 ## FastAPI Backend
 
 The FastAPI backend handles the translation requests from the Streamlit app. It processes the uploaded file, performs translations using OpenAI's GPT models, and returns the translated file.
@@ -94,20 +66,3 @@ The FastAPI backend handles the translation requests from the Streamlit app. It 
 
 - **POST /translate/**: Handles the translation of skill descriptions.
 - **GET /download/{file_path}**: Serves the translated file for download.
-
-## Screenshots
-
-### Streamlit App
-
-![Streamlit App Upload](path_to_upload_screenshot)
-![Streamlit App Selection](path_to_selection_screenshot)
-![Streamlit App Translation](path_to_translation_screenshot)
-![Streamlit App Download](path_to_download_screenshot)
-
-### FastAPI
-
-![FastAPI Endpoint](path_to_fastapi_screenshot)
-
-## License
-
-This project is proprietary and its source code is not publicly available. All rights reserved.
