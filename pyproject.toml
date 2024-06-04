@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "ai-translate"
+name = "skill-translation-api"
 version = "0.1.0"
 description = ""
 authors = ["Elias Soltani <elias.soltani@fuel50.com>"]

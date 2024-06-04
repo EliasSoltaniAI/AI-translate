@@ -12,8 +12,30 @@ The model is configurable. It can run in parallel to speed up and the number of 
 - [FastAPI Backend](#fastapi-backend)
 
 ## Installation
-Open a terminal and follow the next commands.
+For dependencies managment this project uses `pyenv` - to set specific version of python and `poetry` to provide controll on dependencies versions.
 
+Installation of pyenv:
+```
+brew update
+brew install pyenv
+```
+Installation of poetry 
+```
+curl -sSL https://install.python-poetry.org | python3 -
+```
+
+After initial installation is done one should choose a version of python to run, currently it's 3.11 and initialise virtual environment with the project dependencies.
+
+For that one needs to go into the project directory and run following commands:
+
+```{bash}
+pyenv install 3.11
+pyenv local 3.11
+poetry env use 3.11
+poetry install
+```
+
+Then do these steps if you already haven't done.
 1. Clone the repository:
     ```bash
     git clone git@github.com:EliasSoltaniAI/skill-translation-api.git
@@ -22,14 +44,21 @@ Open a terminal and follow the next commands.
 
 2. Install the required packages:
     ```bash
+    pyenv install 3.11
+    pyenv local 3.11
+    poetry env use 3.11
     poetry install
     poetry shell
     ```
 
 ## Usage
-    ```bash
-    chmod +x run_app.sh && ./run_app.sh
-    ```
+You need to add your openai api key. look at the `llm_confi.yaml.example` and create `llm_config.yaml` file with the correct openai API key. See this https://help.openai.com/en/articles/4936850-where-do-i-find-my-openai-api-key
+
+
+Open a terminal and run the code below
+```
+chmod +x run_app.sh && ./run_app.sh
+```
 Open your web browser and go to `http://localhost:8501`.
 or you can run the backend and frontend with the follwoing commands
 1. Start the FastAPI backend:
