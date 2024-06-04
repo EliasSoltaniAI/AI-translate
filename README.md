@@ -12,6 +12,12 @@ The model is configurable. It can run in parallel to speed up and the number of 
 - [FastAPI Backend](#fastapi-backend)
 
 ## Installation
+Then do these steps if you already haven't done.
+1. Clone the repository:
+    ```bash
+    git clone git@github.com:EliasSoltaniAI/skill-translation-api.git
+    cd skill-translation-api
+    ```
 For dependencies managment this project uses `pyenv` - to set specific version of python and `poetry` to provide controll on dependencies versions.
 
 Installation of pyenv:
@@ -25,22 +31,6 @@ curl -sSL https://install.python-poetry.org | python3 -
 ```
 
 After initial installation is done one should choose a version of python to run, currently it's 3.11 and initialise virtual environment with the project dependencies.
-
-For that one needs to go into the project directory and run following commands:
-
-```{bash}
-pyenv install 3.11
-pyenv local 3.11
-poetry env use 3.11
-poetry install
-```
-
-Then do these steps if you already haven't done.
-1. Clone the repository:
-    ```bash
-    git clone git@github.com:EliasSoltaniAI/skill-translation-api.git
-    cd skill-translation-api
-    ```
 
 2. Install the required packages:
     ```bash
