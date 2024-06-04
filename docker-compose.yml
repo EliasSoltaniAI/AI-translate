@@ -1,0 +1,16 @@
+version: '3.7'
+
+services:
+  skill-description-translator:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: skill-description-translator-container
+    image: skill-description-translator:latest
+    ports:
+      - "8501:8501"  # Streamlit port
+      - "8000:8000"  # FastAPI port
+    volumes:
+      - .:/app
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
