@@ -8,10 +8,8 @@ The model is configurable. It can run in parallel to speed up and the number of 
 
 - [Installation](#installation)
 - [Usage](#usage)
-- [Project Structure](#project-structure)
 - [Streamlit App](#streamlit-app)
 - [FastAPI Backend](#fastapi-backend)
-- [Screenshots](#screenshots)
 
 ## Installation
 Open a terminal and follow the next commands.
