@@ -25,6 +25,8 @@ from utils.utils import convert_to_df
 
 from utils.logger import setup_logger
 
+global completed
+completed = False
 
 logger = setup_logger(__name__)
 
@@ -95,6 +97,7 @@ class FastAPI_Wrapper(FastAPI):
                 global pool
                 pool = Pool(num_processes)
 
+                final_output_path = os.path.join(output_dir, f'translated_combined.xlsx')
                 def translate_runner():
                     for pair in sheet_column_pairs:
                         sheet = pair.get("sheet")
@@ -114,7 +117,7 @@ class FastAPI_Wrapper(FastAPI):
                     pool.close()
                     pool.join()
                     # Combine all the translated DataFrames and save to a single Excel file
-                    final_output_path = os.path.join(output_dir, f'translated_combined.xlsx')
+                    
                     with pd.ExcelWriter(final_output_path) as writer:
                         for sheet_name, dfs in df_sheet.items():
                             logger.info(f"Processing sheet: {sheet_name}")
@@ -125,9 +128,19 @@ class FastAPI_Wrapper(FastAPI):
                                 original_df.update(updated_df)            
                             original_df.to_excel(writer, index=False, sheet_name=sheet_name)
 
-                    return {"status": "success", "file_path": final_output_path}
-                
+                    global completed
+                    completed = True
+
                 threading.Thread(target=translate_runner, daemon=True).start()
+
+                return {"status": "success", "file_path": final_output_path}
             except Exception as e:
                 raise HTTPException(status_code=500, detail=str(e))
+            
+
+        @self.get("/completed")
+        def completed():
+            global completed
+            # Check if the translation process is completed using a global variable that you can get from the main thread
+            return {"completed": completed}
 

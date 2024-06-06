@@ -74,7 +74,7 @@ def select_sheet_column_pairs_and_get_languages(excel_file, uploaded_file):
         if possible_sheets:
             st.session_state.sheet_column_pairs.append({"sheet": None, "columns": []})
         else:
-            st.warning("All sheets have been selected")
+            st.warning("All sheets have been selected. Cannot add more. You can change the selected sheets/columns.")
 
     # Display the sheet-column pairs
     possible_sheets = excel_file.sheet_names
@@ -109,6 +109,8 @@ def display_selected_sheet_column_pairs():
 def select_languages(all_languages):
     with st.expander(f"Languages", expanded=True):
         st.markdown("<h4>Select the languages to translate to:</h4>", unsafe_allow_html=True)
+        st.write("The language codes are shown here. You can select what languages you want to translate to. Only the languages that are present on the column headers of the Excel file are shown. It assumes the sheet has columns with '<languag code> description'.")
+
         select_all = st.checkbox("**Select All**", key="select_all_languages")
         if select_all:
             st.session_state.all_languages_selected = True
@@ -148,14 +150,7 @@ def run_translation(uploaded_file):
 
             response = requests.post(f"{API_BASE_URL}/translate", headers=headers, files=files, data={"data": jdata})
 
-            if response.status_code == 200:
-                st.success('File translated successfully')
-                translated_file_path = response.json().get("file_path")
-                print(translated_file_path)
-                if translated_file_path:
-                    encoded_path = quote(translated_file_path)
-                    st.markdown(f'<a href="{API_BASE_URL}download/{encoded_path}" target="_blank">Download the translated file</a>', unsafe_allow_html=True)
-            else:
+            if not response.status_code == 200:
                 st.error(f'Error in translation: {response.text}')
         except Exception as e:
             st.error(f"Error in translation: {str(e)}")
@@ -175,6 +170,7 @@ def main():
         excel_file = pd.ExcelFile(uploaded_file)
 
         st.markdown("<h4>Select Sheet[s] to Translate:</h4>", unsafe_allow_html=True)
+        st.write("The app will display the sheets in the uploaded Excel file. You can select the sheets and columns to translate and the languages to translate to. Only the columns with '(to translate)' in their names will be displayed.")
 
         all_languages = select_sheet_column_pairs_and_get_languages(excel_file, uploaded_file)
 
@@ -184,8 +180,11 @@ def main():
             select_languages(all_languages)
 
         if not st.session_state.API_STARTED:
-            st.write("Starting the API server...")
             if st.button("🚀  Translate"):
+                st.write("Starting the API server...")
+                if not st.session_state.sheet_column_pairs:
+                    st.error("Please select at least one sheet-column pair to translate.")
+                    return
 
                 import subprocess
                 import threading
@@ -208,9 +207,11 @@ def main():
                 st.session_state.API_STARTED = True
 
                 st.rerun()
-
+        
         if st.session_state.API_STARTED:
-            st.write("Data being sent to the backend:")
+            st.write("Translating. Please wait...")
+            st.info("This may take a while depending on the size of the file and the number of columns to translate. At the end the translated file will be available in the translated_files folder.")
+            st.caption("You can shutdown the API server by clicking the button below.")
             c1, c2, _, c4 = st.columns([1,1,1,1])
             with c4:
                 if st.button("🔥  Shutdown"):
@@ -218,6 +219,22 @@ def main():
                     st.session_state.API_STARTED = False
                     st.rerun()
 
+        # check if the API server is running or completed
+        while st.session_state.API_STARTED:
+            time.sleep(10)
+            response = requests.get(f"{API_BASE_URL}/completed")
+            if response.status_code == 200:
+                if response.json().get("completed"):
+                    st.success("Translation completed.")
+                    st.balloons()
+                    print("Translation completed.")
+                    break
+
+def sidebar():
+    st.sidebar.header('About')
+    st.sidebar.info('FastAPI Wrapper to run the translation service.')
+    st.sidebar.markdown('---')
 
 if __name__ == "__main__":
     main()
+    sidebar()
