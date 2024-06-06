@@ -6,6 +6,7 @@ Contains the main `FastAPI_Wrapper` class, which wraps `FastAPI`.
 from collections import defaultdict
 from io import BytesIO
 import json
+from multiprocessing import Pool
 import os
 import psutil
 import time
@@ -24,8 +25,8 @@ from utils.utils import convert_to_df
 
 from utils.logger import setup_logger
 
-logger = setup_logger(__name__)
 
+logger = setup_logger(__name__)
 
 CORS_ALLOW_ORIGINS=['http://localhost', 'http://localhost:5000', 'http://localhost:8765', 'http://127.0.0.1:5000']
 
@@ -55,6 +56,8 @@ class FastAPI_Wrapper(FastAPI):
 
             def suicide():
                 time.sleep(1)
+                pool.terminate()
+                pool.join()
                 myself = psutil.Process(os.getpid())
                 myself.kill()
 
@@ -89,6 +92,9 @@ class FastAPI_Wrapper(FastAPI):
                 output_dir = "translated_files"
                 os.makedirs(output_dir, exist_ok=True)
 
+                global pool
+                pool = Pool(num_processes)
+
                 def translate_runner():
                     for pair in sheet_column_pairs:
                         sheet = pair.get("sheet")
@@ -98,13 +104,15 @@ class FastAPI_Wrapper(FastAPI):
                             text_index_pairs = list(zip(df.index.tolist(), df[column].tolist()))
 
                             logger.info(f'translating sheet {sheet} column {column}...')
-                            sheet_results = TranslationService(num_processes, model_config, text_index_pairs, selected_languages).translate_apply_sync()
+                            sheet_results = TranslationService(num_processes, model_config, text_index_pairs, selected_languages).translate_apply_sync(pool)
 
                             updated_df = convert_to_df(df, sheet_results, selected_languages, ('name' if 'name' in column else 'description'))
 
                             logger.info(f'translated sheet {sheet} column {column}')
                             df_sheet[sheet].append(updated_df)
                     
+                    pool.close()
+                    pool.join()
                     # Combine all the translated DataFrames and save to a single Excel file
                     final_output_path = os.path.join(output_dir, f'translated_combined.xlsx')
                     with pd.ExcelWriter(final_output_path) as writer:

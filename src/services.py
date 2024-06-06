@@ -1,6 +1,3 @@
-
-from multiprocessing import Pool
-import sys
 import time
 from tqdm import tqdm
 from typing import List, Tuple
@@ -57,26 +54,15 @@ class TranslationService:
         self.processes = processes
         self.prompt = TextTranslationPrompt().create_prompt()
 
-    def translate_apply_sync(self) -> List[Tuple[int, List[str]]]:
+    def translate_apply_sync(self, pool) -> List[Tuple[int, List[str]]]:
         """
         Translate the skills synchronously using multiprocessing
         """
         logger.info(f"Translating {len(self.texts)} skills with {self.processes} processes.")
-        with Pool(self.processes) as pool:
+        try:
             jobs = [pool.apply_async(translate_description, (self.prompt, self.model_config, index_text, self.language_codes))
-                     for index_text in self.texts]
-            try:
-                results = [res.get() for res in tqdm(jobs)]
-            except KeyboardInterrupt:
-                print("Interrupted by user. Terminating processes.")
-                pool.terminate()
-                pool.join()
-                sys.exit(0)
-            except Exception as e:
-                print(f"Error retrieving results: {e}")
-                pool.terminate()
-                pool.join()
-            finally:
-                pool.close()
-                pool.join()
+                        for index_text in self.texts]
+            results = [res.get() for res in tqdm(jobs)]
+        except Exception as e:
+            logger.error(f"Error retrieving results: {e}")
         return results

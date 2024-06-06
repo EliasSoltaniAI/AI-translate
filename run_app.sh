@@ -8,6 +8,3 @@
 # pyenv local 3.11.0
 poetry shell
 poetry run streamlit run src/app/app.py
-
-echo "Press [Enter] to close the terminal..."
-read
