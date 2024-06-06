@@ -1,23 +1,13 @@
 #!/bin/bash
+# export PATH="$HOME/.pyenv/bin:$PATH"
+# eval "$(pyenv init --path)"
+# eval "$(pyenv init -)"
+# eval "$(pyenv virtualenv-init -)"
+# cd "$(dirname "$0")"
+# echo $pwd
+# pyenv local 3.11.0
+poetry shell
+poetry run streamlit run src/app/app.py
 
-# Exit on error
-set -e
-
-# Function to run FastAPI
-run_fastapi() {
-    echo "Starting FastAPI..."
-    uvicorn src.main:app --host 0.0.0.0 --port 8000
-}
-
-# Function to run Streamlit
-run_streamlit() {
-    echo "Starting Streamlit..."
-    streamlit run src/app/app.py --server.port 8501 --server.address 0.0.0.0
-}
-
-# Run both FastAPI and Streamlit
-run_fastapi &
-run_streamlit &
-
-# Wait for both processes to finish
-wait
+echo "Press [Enter] to close the terminal..."
+read

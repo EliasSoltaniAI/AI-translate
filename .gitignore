@@ -9,3 +9,6 @@ llm_config.yaml
 .DS_Store
 
 translated_files/
+
+# log files
+*.log

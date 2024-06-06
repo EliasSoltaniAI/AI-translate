@@ -1,8 +1,8 @@
 
-# Skill Translation API
+# Translator app
 
-This project is a skill description translator. It allows users to upload an Excel file, select sheets and columns to translate, and specify target languages for translation. The translations are performed using OpenAI's GPT models.
-The model is configurable. It can run in parallel to speed up and the number of processors to run is configurable. You can set these parameters in params.yaml file.
+This project is a translator. It allows users to upload an Excel file, select sheets and columns to translate, and specify target languages for translation. The translations are performed using OpenAI's GPT models.
+The model is configurable. It can run in parallel to speed up and the number of processors to run is configurable. You can set these parameters in `params.yaml` file.
 
 ## Table of Contents
 
@@ -12,7 +12,7 @@ The model is configurable. It can run in parallel to speed up and the number of 
 - [FastAPI Backend](#fastapi-backend)
 
 ## Installation
-Then do these steps if you already haven't done.
+Do these steps if you already haven't done.
 1. Clone the repository:
     ```bash
     git clone git@github.com:EliasSoltaniAI/skill-translation-api.git
@@ -62,6 +62,8 @@ or you can run the backend and frontend with the follwoing commands
     ```
 
 3. Open your web browser and go to `http://localhost:8501`.
+
+You can find the created output files in the translated_files directory that the app creates.
 
 ## Streamlit App
 

@@ -1,25 +1,20 @@
+"""
+A utility module to handle the translation
+"""
+
+from typing import List, Tuple
 import pandas as pd
 
-from typing import List, Tuple, Dict
+from utils.logger import setup_logger
 
+logger = setup_logger(__name__)
 
-def get_languages_from_df_column_names(df: pd.DataFrame) -> List[str]:
-    # Assumes that the column name is in the format: {language_code} description
-    return [col.replace(' description', '') for col in df.columns if 'description' in col and col != 'description']
-
-def update_df_description(df: pd.DataFrame, results: List[Tuple[str, List[str]]], language_codes: List[str]) -> pd.DataFrame:
-    columns = language_codes_to_df_column_names(df, language_codes, 'description')
-    df.update(results_to_df(results, columns))
-    return df
-
-def update_df_names(df: pd.DataFrame, results: List[Tuple[str, List[str]]], language_codes: List[str]) -> pd.DataFrame:
-    columns = language_codes_to_df_column_names(df, language_codes, 'name')
-    print(columns)
-    df.update(results_to_df(results, columns))
-    print(df.head())
-    return df
 
 def language_codes_to_df_column_names(df: pd.DataFrame, language_codes: List[str], pattern: str) -> List[str]:
+    """
+    Convert the language codes to the column names in the DataFrame
+    Assumes that the column name is in the format: {language_code} {pattern}
+    """
     columns = []
     for language_code in language_codes:
         for col in df.columns:
@@ -28,7 +23,10 @@ def language_codes_to_df_column_names(df: pd.DataFrame, language_codes: List[str
                 columns.append(col)
     return columns
 
-def results_to_df(results: List[Tuple[str, List[str]]], columns: List[str]) -> pd.DataFrame:   
+def results_to_df(results: List[Tuple[str, List[str]]], columns: List[str]) -> pd.DataFrame:
+    """
+    Convert the results of LLM to a DataFrame
+    """  
     update_data = {'index': []}
     for col in columns:
         update_data[col] = []
@@ -44,11 +42,9 @@ def results_to_df(results: List[Tuple[str, List[str]]], columns: List[str]) -> p
 
     return pd.DataFrame(update_data).set_index('index')
 
-
-def convert_to_df_names(df: pd.DataFrame, results: List[Tuple[int, List[str]]], language_codes: List[str]) -> pd.DataFrame:
-    columns = language_codes_to_df_column_names(df, language_codes, 'name')
-    return results_to_df(results, columns)
-
-def convert_to_df_description(df: pd.DataFrame, results: List[Tuple[int, List[str]]], language_codes: List[str]) -> pd.DataFrame:
-    columns = language_codes_to_df_column_names(df, language_codes, 'description')
+def convert_to_df(df: pd.DataFrame, results: List[Tuple[int, List[str]]], language_codes: List[str], pattern: str) -> pd.DataFrame:
+    """
+    Based on the columns of df, it converts the results of LLM to a DataFrame
+    """
+    columns = language_codes_to_df_column_names(df, language_codes, pattern)
     return results_to_df(results, columns)
